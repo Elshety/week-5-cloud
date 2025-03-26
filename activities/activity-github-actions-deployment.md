@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/79021fdc-f16b-47f0-80fb-e84f0ff422ef)# Activity: Setting Up a CI/CD Pipeline for Node.js App
+# Activity: Setting Up a CI/CD Pipeline for Node.js App
 
 ## Introduction
 In this activity, students will learn how to set up a Continuous Integration and Continuous Deployment (CI/CD) pipeline for a Node.js application using GitHub Actions and AWS S3. By the end, they will have a working pipeline that automatically builds, tests, and deploys their app whenever changes are pushed to the main branch.
