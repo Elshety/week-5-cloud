@@ -106,6 +106,10 @@ Even the best deployments can fail. Maybe a new feature breaks the app, or a dep
   - Deploy to the inactive one (e.g., green), test it, then switch traffic. If something’s broken, just point users back to blue.
   - Best for: Zero-downtime releases and critical systems.
 
+
+![CloudWatch](../_assets/Bule.PNG)
+
+
 - **Canary Deployment**
   - Roll out changes to a small % of users first (e.g., 5%). If no issues arise, gradually increase traffic.
   - Best for: Catching bugs early without affecting everyone.
