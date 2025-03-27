@@ -21,6 +21,11 @@ By the end of this lesson, you will:
 
 Infrastructure as Code (IaC) is the practice of managing and provisioning cloud resources using code (e.g., scripts or configuration files) instead of manual processes. It allows you to define, deploy, and update infrastructure in a repeatable and automated way.
 
+
+![Console](../_assets/infora.PNG)
+
+
+
 ### Key Benefits:
 
 - **Consistency:** Ensures that the same environment is created every time.
@@ -56,6 +61,12 @@ Infrastructure as Code (IaC) is the practice of managing and provisioning cloud 
 ---
 
 ## 2. Comparing Pulumi vs. Terraform for Cloud Automation
+
+
+
+![Console](../_assets/vs.PNG)
+
+
 
 ### Terraform
 
