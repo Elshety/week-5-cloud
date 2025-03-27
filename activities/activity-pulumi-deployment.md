@@ -226,4 +226,4 @@ pulumi stack rm
 ---
 
 ## Conclusion
-This exercise provides a practical introduction to Infrastructure as Code (IaC) using Pulumi and AWS. Students will understand how to automate cloud deployments, enforce security best practices, and manage infrastructure lifecycle efficiently.
+This activity provides a comprehensive introduction to Infrastructure as Code (IaC) using Pulumi and AWS. By completing the steps, you gain hands-on experience in defining, provisioning, and managing cloud resources programmatically. The structured approach reinforces best practices in cloud automation, security configuration, and resource lifecycle management. Mastering these skills enhances efficiency in deploying and maintaining infrastructure, preparing students for real-world cloud development and operations.
