@@ -16,6 +16,12 @@ By implementing these techniques, you will:
 4. Set up real-time alerts via Slack and email for workflow failures  
 5. Apply best practices for log organization and alert optimization  
 
+
+---
+
+## Starter Files
+No pre-existing files are required. You will build everything from scratch during the activity.
+
 ---
 
 ## Part 1: Logging Implementation
