@@ -16,6 +16,9 @@ By completing this project, you will:
 ---
 
 
+# Project Walkthrough
+
+
 ## Step 1: Project Setup
 
 Objective: Establish a scalable project structure and version control foundation.
@@ -26,7 +29,9 @@ Objective: Establish a scalable project structure and version control foundation
 ```bash
 mkdir fullstack-cloud-project  
 cd fullstack-cloud-project  
-mkdir frontend backend infrastructure  
+mkdir frontend
+mkdir backend
+mkdir infrastructure  
 ```
 
 **Structure Overview:**
@@ -44,13 +49,15 @@ echo ".env" >> .gitignore
 echo ".pulumi/" >> .gitignore  
 ```
 
+
+![Final-Project](../_assets/Initialize-Git-Repository.PNG)
+
+
 **Key Files:**
 - `.gitignore` excludes dependencies and secrets.
 
 ---
 
-
-# Project Walkthrough
 
 ## Step 2: Frontend Setup
 
@@ -62,6 +69,14 @@ echo ".pulumi/" >> .gitignore
 cd frontend  
 npx create-react-app .  
 ```
+
+
+![Final-Project](../_assets/Forntend-setup-in-progress.PNG)
+
+
+![Final-Project](../_assets/Forntend-setup-in-done.PNG)
+
+
 
 **Verification:**
 - Run `npm start` → Opens [http://localhost:3000](http://localhost:3000).
