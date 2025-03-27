@@ -35,6 +35,9 @@ Keeping an eye on your CI/CD pipelines is like having a dashboard for your softw
 
 CloudWatch is AWS’s built-in monitoring tool. It tracks logs, metrics, and can even alert you if something goes wrong in your CI/CD process.
 
+![CloudWatch](../_assets/CloudWatch.PNG)
+
+
 #### How to Set It Up:
 
 1. Turn on logging for CodePipeline, CodeBuild, and CodeDeploy—otherwise, you’re flying blind.
@@ -52,6 +55,10 @@ CloudWatch is AWS’s built-in monitoring tool. It tracks logs, metrics, and can
 
 Azure Monitor gives you full visibility into Azure Pipelines, App Services, and more. It collects logs, performance data, and even application-specific insights.
 
+
+![CloudWatch](../_assets/Azure-mo.PNG)
+
+
 #### How to Set It Up:
 
 1. Enable diagnostics for Azure Pipelines and App Services—this feeds data into Azure Monitor.
@@ -68,6 +75,10 @@ Azure Monitor gives you full visibility into Azure Pipelines, App Services, and 
 #### What It Does:
 
 Google Cloud Logging (formerly Stackdriver) keeps tabs on Cloud Build, Cloud Run, and other GCP services. It’s great for tracking deployments and spotting issues.
+
+
+![CloudWatch](../_assets/Google.PNG)
+
 
 #### How to Set It Up:
 
