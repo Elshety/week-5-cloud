@@ -23,6 +23,11 @@ By the end of this lesson, you will:
 
 GitHub Actions is a CI/CD (Continuous Integration/Continuous Deployment) platform integrated into GitHub. It allows you to automate workflows for building, testing, and deploying applications directly from your repository.
 
+
+![Console](../_assets/GGGGG.PNG)
+
+
+
 ### Key Features:
 
 - **Event-Driven**: Workflows are triggered by GitHub events like push, pull request, or issue creation.
