@@ -106,6 +106,9 @@ function App() {
 }
 ```
 
+![Final-Project](../_assets/Modify-for-API-Connection.PNG)
+
+
 ---
 
 ## Step 3: Backend Setup
@@ -119,11 +122,20 @@ cd ../backend
 npm init -y  
 ```
 
+![Final-Project](../_assets/Initialize-Node.-Project-1.PNG)
+
+
+
 ### 3.2 Install Backend Packages
 
 ```bash
 npm install express dotenv cors  
 ```
+
+
+![Final-Project](../_assets/Initialize-Node.-Project-2.PNG)
+
+
 
 ### 3.3 Configure Server
 
@@ -162,6 +174,13 @@ pip install pulumi pulumi-aws
 pulumi new aws-python  
 ```
 
+
+![Final-Project](../_assets/Install-Pulumi-1.PNG)
+
+
+![Final-Project](../_assets/Install-Pulumi-2.PNG)
+
+
 ### 4.2 Define AWS Resources
 
 **File: `__main__.py`**
@@ -180,6 +199,12 @@ db_instance = aws.rds.Instance("db-instance",
     password=pulumi.Config().require_secret("db_password"))
 ```
 
+
+![Final-Project](../_assets/__main__py.PNG)
+
+
+
+
 **Key Resources:**
 - **S3:** Hosts static frontend.
 - **RDS:** Managed MySQL database.
@@ -190,6 +215,12 @@ db_instance = aws.rds.Instance("db-instance",
 ```bash
 pulumi up  
 ```
+
+![Final-Project](../_assets/Deploy-Infrastructure.PNG)
+
+
+![Final-Project](../_assets/Deploy-Infrastructure-2.PNG)
+
 
 ---
 
@@ -229,6 +260,12 @@ jobs:
 
 **Secrets Required:**
 - `AWS_ACCESS_KEY_ID`, `PULUMI_ACCESS_TOKEN`, `SSH_PRIVATE_KEY`.
+
+
+![Final-Project](../_assets/Git-Actions.PNG)
+
+
+
 
 ---
 
