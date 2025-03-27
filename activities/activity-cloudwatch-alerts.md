@@ -24,76 +24,124 @@ No pre-existing files are required. You will build everything from scratch durin
 
 ---
 
-## Part 1: Logging Implementation
 
-### 1.1 Accessing Native GitHub Actions Logs
+## 1. Enhanced Logging in GitHub Actions
+GitHub Actions supports structured logging commands for better workflow debugging.
 
-GitHub Actions automatically generates execution logs for all workflow runs. These logs provide:
+### 1.1 Custom Log Formatting
+GitHub provides special commands (`::notice::`, `::warning::`, `::error::`, `::group::`) to format logs.
 
-- Command execution details
-- Step completion status
-- Error messages and stack traces
-- Performance timing metrics
+### Step-by-Step Implementation
 
-**Access Procedure:**
-
-1. Navigate to the GitHub repository  
-2. Select the "Actions" tab  
+#### Create/Edit a GitHub Actions Workflow
+1. Go to your **GitHub repository**.
 
 ![Console](../_assets/Actions.PNG)
 
 
-3. Choose the relevant workflow  
+2. Navigate to `.github/workflows/` and create/edit a YAML file (e.g., `logging-demo.yml`).
 
-![Console](../_assets/Select-workflow.PNG)
+![Console](../_assets/SSS.PNG)
 
-
-4. Click on the specific run to view detailed logs  
-
-
-![Console](../_assets/specific-run.PNG)
-
-
-### 1.2 Enhanced Logging Techniques
-
-#### Custom Log Formatting
-
-GitHub supports structured log commands:
+#### Use Logging Commands
 
 ```yaml
-steps:
-  - name: Execute build process
-    run: |
-      echo "::group::Dependency Installation"
-      echo "::notice::Initializing package installation"
-      npm install
-      echo "::warning::Detected outdated dependency"
-      echo "::endgroup::"
+name: Enhanced Logging Demo
+on: [push]
+
+jobs:
+  logging-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute build process
+        run: |
+          echo "::group::Dependency Installation"
+          echo "::notice::Initializing package installation"
+          npm install
+          echo "::warning::Detected outdated dependency"
+          echo "::endgroup::"
 ```
 
-**Log Command Reference:**
+- `::group::` & `::endgroup::` → Creates a collapsible log section.
+- `::notice::` → Highlights an informational message.
+- `::warning::` → Indicates a non-critical issue (yellow highlight).
+- `::error::` → Flags a critical failure (red highlight).
 
-- `::notice::` Highlights informational messages
-- `::warning::` Indicates non-critical issues
-- `::error::` Flags critical failures
-- `::group::` Creates collapsible log sections
+#### Run the Workflow
+1. Commit & push changes.
+2. Go to **Actions** tab → Check logs.
 
-#### External Log Storage (AWS CloudWatch)
 
-For long-term log retention and analysis:
+![Console](../_assets/SSS-2.PNG)
+
+
+
+## 2. External Log Storage (AWS CloudWatch)
+For long-term log retention, you can send logs to AWS CloudWatch.
+
+### Prerequisites
+- AWS Account (Free Tier available)
+- AWS IAM User with `logs:PutLogEvents` permissions
+- AWS Credentials stored in GitHub Secrets
+
+### Step-by-Step Setup
+
+#### Step 1: Configure AWS IAM Permissions
+1. Go to **AWS IAM Console** → **Users** → **Add User**.
+2. Attach the following policy:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": ["logs:PutLogEvents", "logs:CreateLogStream"],
+        "Resource": "*"
+    }]
+}
+```
+
+3. Generate **Access Key** & **Secret Key**.
+
+#### Step 2: Store AWS Credentials in GitHub Secrets
+1. Go to **GitHub Repo** → **Settings** → **Secrets** → **Actions** → **New Repository Secret**.
+2. Add:
+   - `AWS_ACCESS_KEY_ID` (from IAM user)
+   - `AWS_SECRET_ACCESS_KEY`
+
+#### Step 3: Modify GitHub Actions Workflow
 
 ```yaml
-- name: Archive logs to CloudWatch
-  run: |
-    echo "Workflow execution started at $(date)" > workflow.log
-    aws logs put-log-events \
-      --log-group-name "github-actions" \
-      --log-stream-name "${{ github.run_id }}" \
-      --log-events file://workflow.log
-  env:
-    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+name: CloudWatch Logging Demo
+on: [push]
+
+jobs:
+  cloudwatch-logging:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Archive logs to CloudWatch
+        run: |
+          echo "Workflow execution started at $(date)" > workflow.log
+          echo "Additional logs here..." >> workflow.log
+          
+          # Send logs to AWS CloudWatch
+          aws logs create-log-group --log-group-name "github-actions" || true
+          aws logs create-log-stream --log-group-name "github-actions" --log-stream-name "${{ github.run_id }}" || true
+          aws logs put-log-events \
+            --log-group-name "github-actions" \
+            --log-stream-name "${{ github.run_id }}" \
+            --log-events file://workflow.log
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-1  # Change to your region
 ```
+
+#### Step 4: Verify Logs in AWS CloudWatch
+1. Go to **AWS CloudWatch Console**.
+2. Navigate to **Logs** → **Log Groups** → `github-actions`.
+3. Check logs under the **Run ID stream**.
+
 
 ---
 
