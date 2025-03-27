@@ -15,6 +15,11 @@ By completing this activity, you will:
 
 ---
 
+## Starter Files
+No pre-existing files are required. You will build everything from scratch during the activity.
+
+---
+
 # Building and Deploying a Full-Stack Cloud Application
 
 ## Step 1: Set Up GitHub Repository
