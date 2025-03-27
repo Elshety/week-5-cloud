@@ -33,8 +33,20 @@ GitHub Actions automatically generates execution logs for all workflow runs. The
 
 1. Navigate to the GitHub repository  
 2. Select the "Actions" tab  
+
+![Console](../_assets/Actions.PNG)
+
+
 3. Choose the relevant workflow  
+
+![Console](../_assets/Select-workflow.PNG)
+
+
 4. Click on the specific run to view detailed logs  
+
+
+![Console](../_assets/specific-run.PNG)
+
 
 ### 1.2 Enhanced Logging Techniques
 
@@ -159,8 +171,4 @@ echo "[$(date +%Y-%m-%dT%H:%M:%S)] Starting deployment sequence"
 
 ## Conclusion
 
-Effective logging and alerting are critical for maintaining CI/CD pipeline reliability. This implementation provides:
-
-- Enhanced debugging through structured, timestamped logs  
-- Proactive failure detection with multi-channel notifications  
-- Compliance-ready log retention with CloudWatch/S3 integration  
+Logging and alerting are essential for ensuring automation reliability. By structuring logs effectively and integrating alerting mechanisms, teams can proactively detect and resolve issues. Implementing these strategies improves workflow transparency, reduces downtime, and enhances deployment efficiency, aligning with best practices in DevOps and cloud automation.
