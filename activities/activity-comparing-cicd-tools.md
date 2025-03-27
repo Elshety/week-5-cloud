@@ -14,7 +14,7 @@ By the end of this activity, you should be able to:
 ---
 
 ## Starter Files
-No pre-existing files are required. You will build everything from scratch during the activity.
+No pre-existing files are required. 
 
 ---
 
