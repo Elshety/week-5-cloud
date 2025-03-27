@@ -1,7 +1,7 @@
 # Activity: CI/CD Pipeline for React + Node.js 
 
 ## Introduction
-This activity guides you through building and deploying a full-stack cloud application using React (frontend), Node.js/Express (backend), Pulumi (Infrastructure as Code), and GitHub Actions (CI/CD). By the end, you'll have a fully automated pipeline that deploys your application to AWS upon code changes.
+Deploying a full-stack cloud application requires integrating frontend, backend, cloud infrastructure, and automation. This guide provides a step-by-step approach to setting up a version-controlled project, developing both frontend and backend, configuring cloud infrastructure with Pulumi, and automating deployment using GitHub Actions.
 
 ---
 
@@ -23,14 +23,19 @@ By completing this activity, you will:
 ### Instructions:
 1. Go to GitHub and create a new repository named `fullstack-cloud-app`.
    
-   *(Screenshot placeholder: Activity-4-Step-1)*
+
+![Deploy-full-stack](../_assets/Activity-4-Step-1.PNG)
+
 
 2. Clone it locally:
    ```bash
    git clone https://github.com/YOUR_USERNAME/fullstack-cloud-app.git
    cd fullstack-cloud-app
    ```
-   *(Screenshot placeholder: Activity-4-Step-2)*
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-2.PNG)
+
 
 ---
 
@@ -42,18 +47,26 @@ By completing this activity, you will:
    ```bash
    npx create-react-app frontend
    ```
-   *(Screenshot placeholder: Activity-4-Step-3)*
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-3.PNG)
+
 
 2. Start the development server:
    ```bash
    cd frontend
    npm start
    ```
-   *(Screenshot placeholder: Activity-4-Step-4)*
+
+![Deploy-full-stack](../_assets/Activity-4-Step-4.PNG)
+
 
 3. Verify React runs at `http://localhost:3000`.
 
-   *(Screenshot placeholder: Local-Test-React)*
+
+
+![Deploy-full-stack](../_assets/Local-Test-React.PNG)
+
 
 ---
 
@@ -65,7 +78,9 @@ By completing this activity, you will:
    ```bash
    mkdir backend && cd backend
    ```
-   *(Screenshot placeholder: Activity-4-Step-5)*
+
+![Deploy-full-stack](../_assets/Activity-4-Step-5.PNG)
+
 
 2. Initialize project:
    ```bash
@@ -76,7 +91,9 @@ By completing this activity, you will:
    ```bash
    npm install express cors dotenv pg
    ```
-   *(Screenshot placeholder: Activity-4-Step-6)*
+
+![Deploy-full-stack](../_assets/Activity-4-Step-6.PNG)
+
 
 4. Create `server.js`:
    ```javascript
@@ -94,7 +111,10 @@ By completing this activity, you will:
    const PORT = process.env.PORT || 5000;
    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
    ```
-   *(Screenshot placeholder: Activity-4-Step-7)*
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-7.PNG)
+
 
 5. Start the server:
    ```bash
@@ -103,7 +123,10 @@ By completing this activity, you will:
 
 6. Verify at `http://localhost:5000`.
 
-   *(Screenshot placeholder: Local-Test-Backend)*
+
+
+![Deploy-full-stack](../_assets/Local-Test-Backend.PNG)
+
 
 ---
 
@@ -114,9 +137,13 @@ By completing this activity, you will:
 ```bash
 pulumi new aws-typescript
 ```
-*(Screenshot placeholder: Activity-4-Step-8)*
 
-*(Screenshot placeholder: Activity-4-Step-9)*
+![Deploy-full-stack](../_assets/Activity-4-Step-8.PNG)
+
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-9.PNG)
+
 
 ---
 
@@ -157,9 +184,14 @@ pulumi new aws-typescript
    ```bash
    pulumi up
    ```
-   *(Screenshot placeholder: Activity-4-Step-10)*
 
-   *(Screenshot placeholder: Activity-4-Step-11)*
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-10.PNG)
+
+
+![Deploy-full-stack](../_assets/Activity-4-Step-11.PNG)
+
 
 ---
 
@@ -225,4 +257,4 @@ pulumi new aws-typescript
 ---
 
 ## Conclusion
-This hands-on exercise provides end-to-end experience in full-stack cloud development, from local setup to automated cloud deployment. You’ll gain practical skills in modern web development, IaC, and CI/CD automation.
+Building and deploying a full-stack cloud application involves multiple steps, from local development to cloud hosting. By automating infrastructure and deployment, you ensure reliability, scalability, and efficient CI/CD workflows. Implementing these practices enhances software delivery, reduces manual errors, and optimizes cloud resource utilization.
