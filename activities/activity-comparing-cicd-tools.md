@@ -13,6 +13,12 @@ By the end of this activity, you should be able to:
 
 ---
 
+## Starter Files
+No pre-existing files are required. You will build everything from scratch during the activity.
+
+---
+
+
 ## Understanding CI/CD in Cloud Providers  
 Continuous Integration and Continuous Deployment (CI/CD) automates the steps between code changes and production releases, enabling faster and more reliable software delivery. Major cloud providers offer managed CI/CD tools that handle building, testing, and deploying applications without requiring teams to manage underlying infrastructure.  
 
