@@ -27,20 +27,36 @@ By completing this activity, students will:
 mkdir pulumi-ec2-demo && cd pulumi-ec2-demo
 ```
 
+![Pulumi](../_assets/Activity-3-Step-1.PNG)
+
+
 2. Initialize a new Pulumi project with JavaScript:
 
 ```bash
 pulumi new aws-javascript
 ```
 
+![Pulumi](../_assets/Activity-3-Step-2.PNG)
+
+
 3. When prompted:
    - **Project name:** ec2-demo
    - **Stack name:** dev (or your preference)
+
+![Pulumi](../_assets/Activity-3-Step-3.PNG)
+
+
    - **AWS region:** Choose your preferred region (e.g., us-west-2)
+
+![Pulumi](../_assets/Activity-3-Step-4.PNG)
+
 
    This generates:
    - `index.js` (main deployment script)
    - `Pulumi.yaml` (project configuration)
+
+![Pulumi](../_assets/yaml-files.PNG)
+
 
 ---
 
@@ -135,15 +151,32 @@ exports.publicHostname = server.publicDns;
 pulumi preview
 ```
 
+![Pulumi](../_assets/Activity-3-Step-5.PNG)
+
+
 2. Deploy the infrastructure:
 
 ```bash
 pulumi up
 ```
 
+![Pulumi](../_assets/creating.PNG)
+
+
 3. Confirm deployment by typing `yes` when prompted.
 
+![Pulumi](../_assets/creating-2.PNG)
+
+
 4. After completion, Pulumi outputs the EC2 instance’s public IP and hostname.
+
+![Pulumi](../_assets/creating-done.PNG)
+
+
+![Pulumi](../_assets/creating-done-2.PNG)
+
+
+![Pulumi](../_assets/EC2-Instance-Same-IP.PNG)
 
 ---
 
@@ -153,6 +186,9 @@ pulumi up
 ```bash
 pulumi stack output
 ```
+
+![Pulumi](../_assets/output.PNG)
+
 
 ---
 
@@ -167,17 +203,25 @@ Modify `index.js` and run:
 pulumi up
 ```
 
+![Pulumi](../_assets/Provisioning-1.PNG)
+
+
 2. Destroy resources (clean up):
 
 ```bash
 pulumi destroy
 ```
 
+![Pulumi](../_assets/Provisioning-2.PNG)
+
+
 3. Remove the stack (delete state):
 
 ```bash
 pulumi stack rm
 ```
+
+![Pulumi](../_assets/Provisioning-3.PNG)
 
 ---
 
