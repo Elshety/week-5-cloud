@@ -13,6 +13,12 @@ By completing this activity, students will:
 
 ---
 
+## Starter Files
+No pre-existing files are required. You will build everything from scratch during the activity.
+
+---
+
+
 ## Step 1: Set Up Your Node.js Application
 ### Objective: Create a basic Node.js app with Express.
 ### Instructions:
