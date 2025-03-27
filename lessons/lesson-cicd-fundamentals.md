@@ -16,6 +16,10 @@ By the end of this lesson, you will:
 ---
 
 ## Understanding CI/CD: The Foundation of Modern Software Development
+
+![CICD](../_assets/CICD-11.PNG)
+
+
 CI/CD stands for Continuous Integration (CI) and Continuous Deployment (CD). These practices are at the heart of modern software development, enabling teams to deliver high-quality software faster and more reliably.
 
 - **Continuous Integration (CI)**:
