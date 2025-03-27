@@ -15,6 +15,11 @@ By completing this activity, students will:
 
 ---
 
+## Starter Files
+No pre-existing files are required. You will build everything from scratch during the activity.
+
+---
+
 # Deploying an EC2 Instance with Pulumi on AWS
 
 ## Step 1: Set Up Your Pulumi Project
