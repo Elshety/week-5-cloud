@@ -16,7 +16,9 @@ By completing this activity, you will:
 ---
 
 ## Starter Files
-No pre-existing files are required. You will build everything from scratch during the activity.
+No pre-existing files are required. You will build everything from scratch during the activity. However you can use the attached starter files:
+1. Frontend (React)
+2. Backend (Node.js + Express)
 
 ---
 
@@ -245,18 +247,6 @@ pulumi new aws-typescript
    git add .
    git commit -m "Set up CI/CD"
    git push origin main
-   ```
-
----
-
-## Step 7: Verify Deployment
-**Objective:** Confirm successful cloud deployment.
-
-### Instructions:
-1. Check GitHub Actions workflow run.
-2. Access your live application:
-   ```bash
-   pulumi stack output bucketEndpoint
    ```
 
 ---
