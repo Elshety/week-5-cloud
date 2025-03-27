@@ -14,7 +14,9 @@ By completing this activity, students will:
 ---
 
 ## Starter Files
-No pre-existing files are required. You will build everything from scratch during the activity.
+No pre-existing files are required. You will build everything from scratch during the activity. though you can use the prepared files including:
+1. basic Node.js app with Express
+2. ci-cd.yml
 
 ---
 
@@ -41,10 +43,6 @@ touch app.js
 ```
 
 
-![App](../_assets/Step-1.PNG)
-
-
-
 
 3. Open `app.js` in a code editor (e.g., VS Code) and paste the following:
 
@@ -61,8 +59,6 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 ```
-
-![App](../_assets/Step-2.PNG)
 
 
 
@@ -128,8 +124,6 @@ git push -u origin main
 
 5. Refresh GitHub—your code should now be uploaded.
 
-
-![App](../_assets/Step-5.PNG)
 
 
 ---
