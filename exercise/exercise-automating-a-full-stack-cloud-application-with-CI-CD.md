@@ -1,10 +1,10 @@
-# Exercise: Automate a Full-Stack App with CI/CD & IaC
+# Project : Automate a Full-Stack App with CI/CD & IaC
 
 ## Introduction  
-This project will deploy a containerized full-stack application to AWS using modern cloud practices. We'll implement Infrastructure as Code (IaC) with Pulumi, establish CI/CD pipelines with GitHub Actions, and ensure proper security and monitoring. This comprehensive exercise combines frontend, backend, and database deployment with automation best practices.
+This project will deploy a containerized full-stack application to AWS using modern cloud practices. We'll implement Infrastructure as Code (IaC) with Pulumi, establish CI/CD pipelines with GitHub Actions, and ensure proper security and monitoring. This comprehensive project combines frontend, backend, and database deployment with automation best practices.
 
 ## Starter Files  
-No pre-existing files are required, though you may reference previous activity materials. The project will be built from scratch including:  
+No pre-existing files are required, The project will be built from scratch, though you may reference previous activity materials including:  
 - React frontend  
 - Node.js backend   
 - Pulumi infrastructure   
@@ -65,7 +65,7 @@ For both frontend and backend:
 
 **Alert Configuration:**  
 - Deployment failure notifications  
-- API error rates (5XX status codes)  
+- API error rates  
 - System health (CPU, memory, disk)  
 - Database connection thresholds  
 
@@ -101,4 +101,4 @@ The complete project submission must include:
 *Professional implementation with proper security and reliability is more valuable than UI polish.*  
 
 ## Conclusion  
-This full-stack cloud deployment exercise integrates critical modern DevOps practices including Infrastructure as Code, continuous deployment, and cloud security. By completing this project, you'll demonstrate comprehensive skills in AWS service integration, automation pipelines, and production-grade deployment strategies essential for cloud-native application development.
+This full-stack cloud deployment project integrates critical modern DevOps practices including Infrastructure as Code, continuous deployment, and cloud security. By completing this project, you'll demonstrate comprehensive skills in AWS service integration, automation pipelines, and production-grade deployment strategies essential for cloud-native application development.
