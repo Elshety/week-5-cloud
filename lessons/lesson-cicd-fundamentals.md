@@ -53,11 +53,20 @@ CI/CD is a universal concept, but its implementation varies across cloud platfor
 - **AWS**:
   Offers services like AWS CodePipeline, CodeBuild, and CodeDeploy, which are tightly integrated with AWS infrastructure (e.g., EC2, S3). Ideal for applications already using AWS services.
 
+![CICD](../_assets/aws-ll.PNG)
+
+
 - **Azure**:
   Provides Azure DevOps and Azure Pipelines, which integrate seamlessly with Microsoft tools like Visual Studio. Best suited for Microsoft-centric environments.
 
+![CICD](../_assets/azure-ll.PNG)
+
+
 - **Google Cloud**:
   Focuses on containerized workloads with tools like Google Cloud Build and Cloud Deploy, making it a great choice for Kubernetes-based applications.
+
+
+![CICD](../_assets/google-cloud-ll.PNG)
 
 
 ### Choosing the Right Cloud-Based CI/CD Solution
@@ -96,12 +105,19 @@ CI/CD relies on powerful tools to automate workflows. Here are some of the most 
 - **GitHub Actions**:
   Integrated directly into GitHub repositories, GitHub Actions automates builds, tests, and deployments using YAML configuration files. It’s easy to set up and supports a wide range of programming languages.
 
+![CICD](../_assets/GitHub-action-ll.PNG)
+
+
 - **Jenkins**:
   An open-source automation server, Jenkins is highly customizable with a vast plugin ecosystem. It can be self-hosted and supports distributed builds across multiple machines.
+
+![CICD](../_assets/Jun.PNG)
+
 
 - **AWS CodeDeploy**:
   A deployment service that automates application deployments to EC2 instances, Lambda functions, and ECS services. It supports blue/green deployments for minimal downtime.
 
+![CICD](../_assets/Code-de.PNG)
 
 
 ### How These Tools Work in Practice
