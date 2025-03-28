@@ -45,7 +45,7 @@ You will build the project from scratch, but a pre-configured folder structure i
 1. Download the LTS version from the [Node.js website](https://nodejs.org/).
 2. Run the installer with default settings.
 
-#### Option B: Using nvm (Advanced Users)
+#### Option B: Using nvm 
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash  
 nvm install --lts  
@@ -57,10 +57,16 @@ node --version  # Expected: v18.x or later
 npm --version   # Expected: 9.x or later  
 ```
 
+![Final-Project](../_assets/1111.PNG)
+
+
 ### Pulumi Installation
 ```bash
 curl -fsSL https://get.pulumi.com | sh  
 ```
+
+![Final-Project](../_assets/3333.PNG)
+
 
 ### AWS CLI Installation
 ```bash
@@ -69,6 +75,10 @@ unzip awscliv2.zip
 sudo ./aws/install  
 aws --version  # Verify installation  
 ```
+
+![Final-Project](../_assets/2222.PNG)
+
+
 
 ### Git Installation
 #### Linux (Debian/Ubuntu):
@@ -84,11 +94,19 @@ brew install git
 git --version  
 ```
 
+![Final-Project](../_assets/4444.PNG)
+
+
 ## 2. Configuring AWS Credentials
 Run:
 ```bash
 aws configure  
 ```
+
+
+![Final-Project](../_assets/5555.PNG)
+
+
 Enter the following when prompted:
 - **AWS Access Key ID** (from IAM user)
 - **AWS Secret Access Key**
@@ -107,15 +125,18 @@ Enter the following when prompted:
 5. Do not initialize with a README (we’ll do this manually).
 6. Click **Create repository**.
 
+![Final-Project](../_assets/1-creating-repo.PNG)
+
+
+
 ### Cloning & Initial Setup
 ```bash
 git clone https://github.com/your-username/final-fullstack-cloud-project.git  
-cd final-fullstack-cloud-project  
-echo "# Fullstack Cloud Project" > README.md  
-git add README.md  
-git commit -m "Initial commit"  
-git push origin main  
+cd final-fullstack-cloud-project
 ```
+
+![Final-Project](../_assets/6-Link-GitHub.PNG)
+
 
 ## VS Code Integration (Recommended Setup)
 1. Open VS Code → `File` → `Open Folder` (select project directory).
@@ -138,6 +159,8 @@ A well-organized project structure is essential for:
 
 ### Final Directory Layout
 
+![Final-Project](../_assets/2-creating-structure-pc.PNG)
+
 ```plaintext
 final-fullstack-cloud-project/  
 ├── frontend/            # Frontend application (React, Vue, etc.)  
@@ -156,6 +179,9 @@ final-fullstack-cloud-project/
 └── README.md            # Project overview, setup, and usage  
 ```
 
+![Final-Project](../_assets/2-creating-structure-vs.PNG)
+
+
 
 ---
 
@@ -173,6 +199,10 @@ final-fullstack-cloud-project/
 npx create-react-app frontend --template typescript
 cd frontend
 ```
+
+
+![Final-Project](../_assets/3-initializing-react.PNG)
+
 
 #### What Happens?
 - `npx` downloads and runs `create-react-app` without global installation.
@@ -197,8 +227,20 @@ npm start
 ```
 
 - Starts dev server at `http://localhost:3000`.
+
+
+
+![Final-Project](../_assets/3-verifying-react-locally-2.PNG)
+
 - Displays default React welcome page.
+
+
+![Final-Project](../_assets/3-verifying-react-locally.PNG)
+
+
 - Stop server: Press `Ctrl+C` in the terminal.
+
+
 
 ---
 
@@ -208,11 +250,67 @@ npm start
 
 **Location:** `frontend/src/App.tsx`
 
+![Final-Project](../_assets/3-edit-app-tsx.PNG)
+
+
+```typescript
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+function App() {
+  // State for storing the message from backend
+  const [message, setMessage] = useState('');
+  
+  // State for storing data from database
+  const [data, setData] = useState<any[]>([]);
+
+  // Get API URL from environment variables or use localhost as fallback
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
+
+  // Effect hook to fetch data when component mounts
+  useEffect(() => {
+    // Fetch simple message from backend
+    fetch(`${apiUrl}/message`)
+      .then(res => res.json())
+      .then(data => setMessage(data.text))
+      .catch(err => console.error('Error fetching message:', err));
+
+    // Fetch data from backend (which comes from database)
+    fetch(`${apiUrl}/data`)
+      .then(res => res.json())
+      .then(data => setData(data))
+      .catch(err => console.error('Error fetching data:', err));
+  }, [apiUrl]); // Dependency array ensures effect runs when apiUrl changes
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Cloud Infrastructure Project</h1>
+        
+        {/* Display message from backend */}
+        <p>Message from backend: {message}</p>
+        
+        <h2>Data from Database:</h2>
+        <ul>
+          {/* Map through data array and display each item */}
+          {data.map((item, index) => (
+            <li key={index}>{JSON.stringify(item)}</li>
+          ))}
+        </ul>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
 **Key Features:**
 - **State Management**: `useState` for dynamic data.
 - **API Calls**: `fetch` to connect to the backend.
 - **TypeScript**: Define interfaces for type safety (replace `any[]` later).
 - **Error Handling**: Basic `try/catch` for API errors.
+```
+
 
 ---
 
@@ -221,6 +319,10 @@ npm start
 #### Creating `.env`
 
 **Location:** `frontend/.env`
+
+
+![Final-Project](../_assets/3-create-env.PNG)
+
 
 **Purpose:**
 - Store environment-specific settings (e.g., API URLs).
@@ -252,6 +354,10 @@ REACT_APP_API_URL=http://your-ec2-public-ip:3001
 2. Verify:
    - App opens at `http://localhost:3000`.
    - No errors in the browser console.
+
+
+![Final-Project](../_assets/3-verifying-react-locally.PNG)
+
   
 ---
 
@@ -263,19 +369,48 @@ REACT_APP_API_URL=http://your-ec2-public-ip:3001
 
 Commands:
 
+
+##### Navigate to backend directory
+
 ```bash
-# Navigate to backend directory
 cd ../backend
+```
 
-# Initialize Node.js project (creates package.json)
+
+##### Initialize Node.js project (creates package.json)
+
+```bash
 npm init -y
+```
 
-# Install production dependencies
+
+![Final-Project](../_assets/4-initialize-1.PNG)
+
+
+
+##### Install production dependencies
+
+```bash
 npm install express cors pg dotenv
+```
 
-# Install development dependencies (TypeScript support)
+
+![Final-Project](../_assets/4-initialize-2.PNG)
+
+
+
+##### Install development dependencies (TypeScript support)
+
+```bash
 npm install --save-dev typescript @types/express @types/cors @types/node @types/pg nodemon
 ```
+
+
+![Final-Project](../_assets/4-initialize-3.PNG)
+
+
+
+
 
 #### Key Dependencies:
 
@@ -298,6 +433,9 @@ npm install --save-dev typescript @types/express @types/cors @types/node @types/
 npx tsc --init
 ```
 
+![Final-Project](../_assets/4-initialize-4.PNG)
+
+
 This generates `tsconfig.json` with default settings.
 
 #### Recommended `tsconfig.json` Adjustments:
@@ -311,10 +449,17 @@ This generates `tsconfig.json` with default settings.
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
 ```
+
+![Final-Project](../_assets/4-Configuring-TypeScript.PNG)
+
 
 ---
 
@@ -324,6 +469,63 @@ This generates `tsconfig.json` with default settings.
 
 Location: `backend/src/index.ts`
 
+```typescript
+import express from 'express';
+import cors from 'cors';
+import { Pool } from 'pg';
+
+// Initialize Express application
+const app = express();
+
+// Middleware setup
+app.use(cors()); // Enable CORS for all routes
+app.use(express.json()); // Parse JSON request bodies
+
+// Database connection configuration
+const pool = new Pool({
+  user: process.env.DB_USER,       // Database username
+  host: process.env.DB_HOST,       // Database host (RDS endpoint)
+  database: process.env.DB_NAME,    // Database name
+  password: process.env.DB_PASSWORD,// Database password
+  port: parseInt(process.env.DB_PORT || '5432'), // Database port
+});
+
+// Simple test endpoint
+app.get('/api/message', (req, res) => {
+  // Returns a simple JSON response
+  res.json({ text: 'Hello from the backend!' });
+});
+
+// Database interaction endpoint
+app.get('/api/data', async (req, res) => {
+  try {
+    // Query the database
+    const result = await pool.query('SELECT * FROM sample_data');
+    
+    // Return query results
+    res.json(result.rows);
+  } catch (err) {
+    // Error handling
+    console.error(err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK' });
+});
+
+// Server configuration
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Backend server running on port ${PORT}`);
+});
+```
+
+![Final-Project](../_assets/4-create-index-ts.PNG)
+
+
 ---
 
 ### 4. Database Initialization
@@ -331,6 +533,10 @@ Location: `backend/src/index.ts`
 #### SQL Script (`src/db-init.sql`)
 
 Location: `backend/src/db-init.sql`
+
+
+![Final-Project](../_assets/4-create-sql-db.PNG)
+
 
 ---
 
@@ -402,14 +608,18 @@ npm run dev
 1. **Health Check:**
    
    `http://localhost:3001/api/health`
-   
+
    Expected Response:
    
    ```json
    {"status":"OK"}
    ```
+
+![Final-Project](../_assets/8-backend-api-testing.PNG)
+
+
    
-2. **Test Message:**
+1. **Test Message:**
    
    `http://localhost:3001/api/message`
    
@@ -418,6 +628,7 @@ npm run dev
    ```json
    {"message":"Hello from backend!"}
    
+![Final-Project](../_assets/8-backend-api-testing-2.PNG)
 
 
 ---
