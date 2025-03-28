@@ -75,7 +75,7 @@ Verify:
 - Backend successfully connects to RDS  
 - All security controls are effective  
 - Monitoring alerts trigger appropriately  
-- Rollback mechanisms function  
+
 
 ## Deliverables  
 The complete project submission must include:  
@@ -84,7 +84,6 @@ The complete project submission must include:
    - Frontend (React) and backend (Node.js) source  
    - Pulumi infrastructure scripts  
    - GitHub Actions workflow files  
-   - Dockerfiles and deployment scripts  
 
 2. **Live Deployment:**  
    - Public URL for the React frontend  
@@ -95,8 +94,6 @@ The complete project submission must include:
    - Complete deployment process  
    - Security implementations (IAM, networking)  
    - Monitoring and alerting configuration  
-   - Rollback procedures  
-   - Architecture diagram  
 
 *Professional implementation with proper security and reliability is more valuable than UI polish.*  
 
