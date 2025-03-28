@@ -642,6 +642,13 @@ cd ../infrastructure
 pulumi new aws-javascript
 # Follow prompts to name your project (e.g., fullstack-cloud) and stack (e.g., dev)
 ```
+![Final-Project](../_assets/5-Initializing-pulumi-1.PNG)
+
+
+![Final-Project](../_assets/5-Initializing-pulumi-1-done.PNG)
+
+
+
 
 ### Install Required Pulumi Packages
 
@@ -649,6 +656,9 @@ pulumi new aws-javascript
 npm install @pulumi/aws @pulumi/awsx @pulumi/pulumi
 Create Infrastructure Code
 ```
+
+![Final-Project](../_assets/5-Initializing-pulumi-2.PNG)
+
 
 ### Create Infrastructure Code:
 Create a new file infrastructure/index.js and add the following code:
@@ -668,8 +678,16 @@ const vpc = new awsx.ec2.Vpc("fullstack-vpc", {
 });
 ```
 
+**Components:**
+- cidrBlock: Defines the IP range for the VPC (10.0.0.0/16 gives us 65,536 IPs)
+- numberOfAvailabilityZones: Creates resources across 2 AZs for redundancy
+- subnets: Configures both public and private subnets
+  - Public subnets: For resources needing internet access
+  - Private subnets: For database and internal services
 
-3.2. S3 Bucket for Frontend
+
+
+### 3.2. S3 Bucket for Frontend
 
 ```javascript
 // Create an S3 bucket for the frontend
@@ -680,7 +698,15 @@ const frontendBucket = new aws.s3.Bucket("frontend-bucket", {
     },
     acl: "public-read",
 });
+```
 
+**Configuration details:**
+- website: Configures the bucket for static website hosting
+  - indexDocument: Default page to serve
+  - errorDocument: Page to show for errors (we use index.html for SPAs)
+
+### Bucket Policy
+```
 // Create a bucket policy to allow public read access
 const bucketPolicy = new aws.s3.BucketPolicy("bucketPolicy", {
     bucket: frontendBucket.bucket,
@@ -696,7 +722,14 @@ const bucketPolicy = new aws.s3.BucketPolicy("bucketPolicy", {
 });
 ```
 
-```
+**Important notes**
+- apply() is a Pulumi concept that handles asynchronous values
+- The policy explicitly allows public read access to all objects
+- In production, you might want to restrict this further
+
+
+### 3.3. RDS PostgreSQL Instance
+```javascript
 // Create an RDS PostgreSQL instance
 const dbSubnetGroup = new aws.rds.SubnetGroup("db-subnet-group", {
     subnetIds: vpc.privateSubnetIds,
@@ -729,7 +762,12 @@ const rdsInstance = new aws.rds.Instance("backend-db", {
     skipFinalSnapshot: true,
     publiclyAccessible: true,
 });
+```
 
+
+### 3.4. EC2 Instance for Backend
+
+```javascript
 // Create an EC2 instance for the backend
 const ec2SecurityGroup = new aws.ec2.SecurityGroup("backend-security-group", {
     vpcId: vpc.vpcId,
@@ -783,44 +821,23 @@ const ec2Instance = new aws.ec2.Instance("backend-instance", {
         Name: "BackendServer",
     },
 });
+```
 
+### 3.5. Export Outputs
+```javascript
 // Export the outputs
 exports.frontendUrl = pulumi.interpolate`http://${frontendBucket.websiteEndpoint}`;
 exports.backendUrl = pulumi.interpolate`http://${ec2Instance.publicIp}:3001`;
 exports.dbEndpoint = rdsInstance.endpoint;
 ```
 
----
-
-# Code Explanation
-
-### VPC Setup:
-- **cidrBlock**: Configures the IP range for the VPC.
-- **numberOfAvailabilityZones**: Ensures redundancy by deploying across two availability zones.
-- **subnets**: Creates both public and private subnets for separating resources.
-
-### S3 Bucket for Frontend:
-- Configures a static website for the frontend with `index.html` as the entry point and `index.html` for error handling.
-- **acl**: Grants public read access to all objects in the bucket.
-- **Bucket Policy**: Ensures that the public can read the contents of the S3 bucket.
-
-### RDS PostgreSQL Instance:
-- **Subnet Group**: Places the RDS instance in private subnets for security.
-- **Security Group**: Allows TCP access on port 5432 (PostgreSQL).
-- **RDS Instance**: Configures a PostgreSQL database with a `t3.micro` instance for low-cost, small workloads.
-
-### EC2 Instance for Backend:
-- **Security Group**: Allows SSH (port 22) and the backend API port (port 3001).
-- **AMI Lookup**: Retrieves the most recent Amazon Linux 2 AMI for the EC2 instance.
-- **User Data Script**: Installs Docker and Docker Compose on the EC2 instance.
-- **EC2 Instance Creation**: Deploys the backend server on EC2.
-
-### Outputs:
+**Outputs:**
 - **Frontend URL**: Exports the URL for the frontend hosted on the S3 bucket.
 - **Backend URL**: Exports the URL for the backend API running on the EC2 instance.
 - **Database Endpoint**: Exports the endpoint of the RDS database.
 
 ---
+
 
 # 6. CI/CD Pipeline with GitHub Actions
 
@@ -842,6 +859,9 @@ exports.dbEndpoint = rdsInstance.endpoint;
 ## 1. Frontend Deployment Workflow
 
 **File Location**: `.github/workflows/frontend-deploy.yml`
+
+![Final-Project](../_assets/6-frontend-yml.PNG)
+
 
 ```
 name: Deploy Frontend to S3
@@ -881,7 +901,7 @@ jobs:
         aws s3 sync frontend/build/ s3://$(aws s3api list-buckets --query "Buckets[?contains(Name, 'frontend-bucket')].Name" --output text) --delete
 ```
 
-# Workflow Breakdown:
+## Workflow Breakdown:
 
 ## Trigger Explanation:
 - Runs when code is pushed to the main branch
@@ -924,6 +944,8 @@ jobs:
 
 ## 2. Backend Deployment Workflow
 **File Location**: `.github/workflows/backend-deploy.yml`
+
+![Final-Project](../_assets/6-backend-yml.PNG)
 
 
 ```
@@ -982,6 +1004,54 @@ jobs:
           pm2 start src/index.js --name "backend"
 ```
 
+# Workflow Breakdown:
+
+## Trigger Explanation:
+- Runs when code is pushed to the main branch
+- Only triggers when files in `backend/` directory change
+- Prevents unnecessary runs when only frontend changes occur
+
+## Jobs Configuration:
+- Uses GitHub-hosted Ubuntu runner
+- Single job named "deploy"
+
+## Steps Details:
+
+1. **Checkout Code**:
+   - Checks out your repository content
+   - Required for all workflows that need your code
+
+2. **Configure AWS Credentials**:
+   - Sets up AWS CLI with credentials
+   - Uses GitHub secrets for secure credential storage
+   - Configures region matching your infrastructure
+
+3. **Install Dependencies**:
+   - Navigates to `backend` directory
+   - Installs all npm packages
+   - Creates `node_modules` with production dependencies
+
+4. **Package Backend**:
+   - Creates compressed tarball of backend code
+   - Includes all necessary files for deployment
+   - Generates `backend.tar.gz` in backend directory
+
+5. **Deploy to EC2**:
+   - Uses SCP to securely transfer archive to EC2
+   - Connects using SSH key stored in GitHub secrets
+   - Copies archive to EC2 user's home directory
+
+6. **SSH and Restart Backend**:
+   - Extracts the transferred archive on EC2
+   - Installs any new dependencies
+   - Uses PM2 to:
+     - Gracefully stop existing backend process
+     - Start new version of the backend
+   - Ensures zero-downtime deployment
+
+
+---
+
 ## 3. Setting Up Required Secrets
 Before workflows can run, you need to configure GitHub secrets:
 #### 1.	AWS Credentials:
@@ -990,6 +1060,9 @@ Before workflows can run, you need to configure GitHub secrets:
 #### 2.	EC2 Connection Details:
 - EC2_HOST: Public IP or DNS of your EC2 instance
 - EC2_SSH_KEY: Private key content for SSH access
+
+
+![Final-Project](../_assets/6-GitHub-Secrit-Actions.PNG)
 
 How to Add Secrets in GitHub:
 1.	Go to your repository on GitHub
