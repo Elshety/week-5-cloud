@@ -439,7 +439,10 @@ npm install @pulumi/aws @pulumi/awsx @pulumi/pulumi
 Create Infrastructure Code
 ```
 
-### Create infrastructure/index.js:
+### Create Infrastructure Code:
+Create a new file infrastructure/index.js and add the following code:
+
+### 3.1. VPC Setup
 
 ```javascript
 const aws = require("@pulumi/aws");
@@ -452,7 +455,12 @@ const vpc = new awsx.ec2.Vpc("fullstack-vpc", {
     numberOfAvailabilityZones: 2,
     subnets: [{ type: "public" }, { type: "private" }],
 });
+```
 
+
+3.2. S3 Bucket for Frontend
+
+```javascript
 // Create an S3 bucket for the frontend
 const frontendBucket = new aws.s3.Bucket("frontend-bucket", {
     website: {
@@ -475,7 +483,9 @@ const bucketPolicy = new aws.s3.BucketPolicy("bucketPolicy", {
         }],
     })),
 });
+```
 
+```
 // Create an RDS PostgreSQL instance
 const dbSubnetGroup = new aws.rds.SubnetGroup("db-subnet-group", {
     subnetIds: vpc.privateSubnetIds,
@@ -569,7 +579,321 @@ exports.backendUrl = pulumi.interpolate`http://${ec2Instance.publicIp}:3001`;
 exports.dbEndpoint = rdsInstance.endpoint;
 ```
 
+---
+
+# Code Explanation
+
+### VPC Setup:
+- **cidrBlock**: Configures the IP range for the VPC.
+- **numberOfAvailabilityZones**: Ensures redundancy by deploying across two availability zones.
+- **subnets**: Creates both public and private subnets for separating resources.
+
+### S3 Bucket for Frontend:
+- Configures a static website for the frontend with `index.html` as the entry point and `index.html` for error handling.
+- **acl**: Grants public read access to all objects in the bucket.
+- **Bucket Policy**: Ensures that the public can read the contents of the S3 bucket.
+
+### RDS PostgreSQL Instance:
+- **Subnet Group**: Places the RDS instance in private subnets for security.
+- **Security Group**: Allows TCP access on port 5432 (PostgreSQL).
+- **RDS Instance**: Configures a PostgreSQL database with a `t3.micro` instance for low-cost, small workloads.
+
+### EC2 Instance for Backend:
+- **Security Group**: Allows SSH (port 22) and the backend API port (port 3001).
+- **AMI Lookup**: Retrieves the most recent Amazon Linux 2 AMI for the EC2 instance.
+- **User Data Script**: Installs Docker and Docker Compose on the EC2 instance.
+- **EC2 Instance Creation**: Deploys the backend server on EC2.
+
+### Outputs:
+- **Frontend URL**: Exports the URL for the frontend hosted on the S3 bucket.
+- **Backend URL**: Exports the URL for the backend API running on the EC2 instance.
+- **Database Endpoint**: Exports the endpoint of the RDS database.
+
+---
+
+# 6. CI/CD Pipeline with GitHub Actions
+
+## Understanding GitHub Actions Workflows
+
+### Purpose of CI/CD Pipelines:
+- Automate deployment processes
+- Ensure consistent builds
+- Reduce human error
+- Enable rapid iteration
+- Provide rollback capabilities
+
+### Key Components:
+- **Workflows**: Defined in YAML files in `.github/workflows/`
+- **Events**: Triggers for workflows (e.g., push to main branch)
+- **Jobs**: Sets of steps that run on the same runner
+- **Steps**: Individual tasks that run commands or actions
+
+## 1. Frontend Deployment Workflow
+
+**File Location**: `.github/workflows/frontend-deploy.yml`
+
+```
+name: Deploy Frontend to S3
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'frontend/**' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Deploy to S3
+      run: |
+        aws s3 sync frontend/build/ s3://$(aws s3api list-buckets --query "Buckets[?contains(Name, 'frontend-bucket')].Name" --output text) --delete
+```
+
+# Workflow Breakdown:
+
+## Trigger Explanation:
+- Runs when code is pushed to the main branch
+- Only triggers when files in `frontend/` directory change
+- Prevents unnecessary runs when only backend changes occur
+
+## Jobs Configuration:
+- Uses GitHub-hosted Ubuntu runner
+- Single job named "deploy"
+
+## Steps Details:
+1. **Checkout Code**:
+   - Checks out your repository content
+   - Required for all workflows that need your code
+
+2. **Configure AWS Credentials**:
+   - Sets up AWS CLI with credentials
+   - Uses GitHub secrets for secure credential storage
+   - Configures region matching your infrastructure
+
+3. **Install Dependencies**:
+   - Navigates to `frontend` directory
+   - Installs all npm packages
+   - Creates `node_modules` with production dependencies
+
+4. **Build Frontend**:
+   - Creates optimized production build
+   - Outputs to `frontend/build/` directory
+   - Includes minified JS, CSS, and assets
+
+5. **Deploy to S3**:
+   - Uses AWS CLI to sync build directory with S3 bucket
+   - Dynamically finds bucket name (created by Pulumi)
+   - `--delete` removes files in S3 not present in build
+
 
 ---
 
 
+
+## 2. Backend Deployment Workflow
+**File Location**: `.github/workflows/backend-deploy.yml`
+
+
+```
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'backend/**' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm install
+
+    - name: Package backend
+      run: |
+        cd backend
+        tar -czf backend.tar.gz *
+
+    - name: Deploy to EC2
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "backend/backend.tar.gz"
+        target: "/home/ec2-user"
+
+    - name: SSH and restart backend
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ec2-user
+          tar -xzf backend.tar.gz
+          npm install
+          pm2 stop backend || true
+          pm2 start src/index.js --name "backend"
+```
+
+## 3. Setting Up Required Secrets
+Before workflows can run, you need to configure GitHub secrets:
+#### 1.	AWS Credentials:
+- AWS_ACCESS_KEY_ID: From your IAM user
+- AWS_SECRET_ACCESS_KEY: Corresponding secret key
+#### 2.	EC2 Connection Details:
+- EC2_HOST: Public IP or DNS of your EC2 instance
+- EC2_SSH_KEY: Private key content for SSH access
+
+How to Add Secrets in GitHub:
+1.	Go to your repository on GitHub
+2.	Settings > Secrets > Actions
+3.	Click "New repository secret"
+4.	Enter name and value for each secret
+
+Important Security Notes:
+- Never commit secrets to your repository
+- Use least-privilege IAM policies
+- Rotate credentials regularly
+- Consider using AWS IAM Roles instead of keys for production
+
+
+---
+
+# 7. Security and Monitoring Implementation
+
+## 1. IAM Roles and Policies
+
+### Purpose of IAM Configuration
+- **Principle of Least Privilege**: Grant only necessary permissions
+- **Secure Access Control**: Manage who can access which AWS resources
+- **Automated Credential Management**: Avoid hard-coded credentials
+
+### Implementation in Pulumi
+1. **Creating the IAM Role**
+
+2. **Attaching Policies**
+   - **Policy Details**:
+     - **AmazonS3ReadOnlyAccess**:
+       - Allows reading from any S3 bucket
+       - Needed if your backend accesses S3 resources
+       - Consider restricting to specific buckets in production
+     - **CloudWatchAgentServerPolicy**:
+       - Enables sending logs and metrics to CloudWatch
+       - Required for proper monitoring
+
+3. **Creating Instance Profile**
+
+4. **Assigning to EC2 Instance**
+
+---
+
+## 2. CloudWatch Logging and Alarms
+
+
+---
+
+
+# 8. Final Deployment and Testing
+
+## 1. Committing and Pushing Code
+### Purpose:
+- Stages all changes (`git add .`)
+- Creates a commit with a descriptive message
+- Pushes code to GitHub, triggering CI/CD pipelines
+
+### What Happens Next:
+3. GitHub Actions will:
+   - Deploy the frontend to S3 (from the frontend workflow)
+   - Deploy the backend to EC2 (from the backend workflow)
+
+4. Each workflow runs independently but in parallel
+
+---
+
+## 2. Deploying Infrastructure
+### Workflow:
+4. Pulumi shows a preview of resources to be created/modified.
+5. You must type "yes" to confirm deployment.
+6. Pulumi provisions resources in the correct dependency order:
+   - First creates VPC and networking components
+   - Then creates the S3 bucket and RDS instance
+   - Finally, creates the EC2 instance with proper security groups
+
+### Monitoring Deployment:
+- Watch for any errors in the Pulumi output.
+- Note that RDS creation can take 10-15 minutes.
+- The EC2 instance will be available sooner but needs time to initialize.
+
+---
+
+## 3. Capturing Outputs
+### Expected Outputs:
+- `frontendUrl`: S3 website endpoint (e.g., `http://frontend-bucket-123.s3-website-us-east-1.amazonaws.com`)
+- `backendUrl`: EC2 public IP with port (e.g., `http://54.210.32.1:3001`)
+- `dbEndpoint`: RDS connection endpoint (e.g., `backend-db-123.abcdefgh.us-east-1.rds.amazonaws.com:5432`)
+
+### Important:
+Save these outputs for testing and configuration!
+
+---
+
+## 4. Backend API Testing
+### Health Check Endpoint:
+**Expected Response:**
+
+### Message Endpoint:
+**Expected Response:**
+
+---
+
+## 5. Comprehensive Testing Strategy
+
+### Frontend Testing:
+3. Access the frontend URL:
+   - Open the browser to `frontendUrl` from Pulumi outputs.
+   - The page should display the "Cloud Infrastructure Project" heading.
+
+4. Verify components:
+   - Check for the message "Hello from the backend!".
+   - This confirms successful frontend-backend communication.
+
+---
+
+# Conclusion
+Automating cloud deployments enhances efficiency, security, and scalability. This project demonstrates best practices in CI/CD, cloud automation, and monitoring using AWS. By following this guide, you will successfully deploy a React frontend, Node.js backend, and RDS database, all managed through an automated pipeline. These skills are essential for real-world cloud engineering.
