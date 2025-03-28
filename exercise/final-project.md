@@ -30,7 +30,7 @@ The objective of this project is to apply the concepts learned in cloud computin
 You will build the project from scratch, but a pre-configured folder structure is available for reference:
 
 
-- `/frontend`        # React/Next.js application
+- `/frontend`        # React application
 - `/backend`         # Node.js/Express API
 - `/infrastructure`  # Pulumi IaC definitions
 
@@ -41,7 +41,7 @@ You will build the project from scratch, but a pre-configured folder structure i
 ## 1. Installing Required Tools
 
 ### Node.js Installation
-#### Option A: Official Installer (Recommended for Beginners)
+#### Option A: Official Installer
 1. Download the LTS version from the [Node.js website](https://nodejs.org/).
 2. Run the installer with default settings.
 
@@ -147,7 +147,7 @@ cd final-fullstack-cloud-project
 
 ---
 
-## Project Structure
+## 2.Project Structure
 
 A well-organized project structure is essential for:
 
@@ -836,6 +836,9 @@ exports.dbEndpoint = rdsInstance.endpoint;
 - **Backend URL**: Exports the URL for the backend API running on the EC2 instance.
 - **Database Endpoint**: Exports the endpoint of the RDS database.
 
+![Final-Project](../_assets/5-stack-output.PNG)
+
+
 ---
 
 
@@ -1217,6 +1220,9 @@ git push origin main
 ### What Happens Next:
 1. GitHub Actions will:
 
+![Final-Project](../_assets/6-Action-Testing-1.PNG)
+
+
     - Deploy the frontend to S3 (from the frontend workflow)
 
 ![Final-Project](../_assets/6-Deploy-Frontend-to-S3.PNG)
@@ -1250,16 +1256,32 @@ pulumi up
 ![Final-Project](../_assets/5-pulumi-up-done-1.PNG)
 
 
-![Final-Project](../_assets/5-pulumi-up-2-done.PNG)
+![Final-Project](../_assets/5-pulumi-up-done-2.PNG)
 
 
 ### Workflow:
 1. Pulumi shows a preview of resources to be created/modified.
 2. You must type "yes" to confirm deployment.
 3. Pulumi provisions resources in the correct dependency order:
-   - First creates VPC and networking components
+
+    - First creates VPC and networking components
+
+![Final-Project](../_assets/9-VPC-Screen.PNG)
+
+
    - Then creates the S3 bucket and RDS instance
+
+![Final-Project](../_assets/9-S3-Screen.PNG)
+
+
+![Final-Project](../_assets/9-RDS-Screen.PNG)
+
+
    - Finally, creates the EC2 instance with proper security groups
+
+![Final-Project](../_assets/9-EC2-Screen.PNG)
+
+
 
 ### Monitoring Deployment:
 - Watch for any errors in the Pulumi output.
@@ -1319,9 +1341,8 @@ curl <backend-url>/api/message
 
 ---
 
-## 5. Comprehensive Testing Strategy
+## 5. Frontend Testing 
 
-### Frontend Testing:
 1. Access the frontend URL:
    - The page should display the "Cloud Infrastructure Project" heading.
 
