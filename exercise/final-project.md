@@ -1089,9 +1089,37 @@ Important Security Notes:
 - **Automated Credential Management**: Avoid hard-coded credentials
 
 ### Implementation in Pulumi
-1. **Creating the IAM Role**
+1. **Creating the IAM Role:**
+
+```javascript
+const ec2Role = new aws.iam.Role("ec2Role", {
+    assumeRolePolicy: JSON.stringify({
+        Version: "2012-10-17",
+        Statement: [{
+            Action: "sts:AssumeRole",
+            Effect: "Allow",
+            Principal: {
+                Service: "ec2.amazonaws.com",
+            },
+        }],
+    }),
+});
+```
 
 2. **Attaching Policies**
+
+```javascript
+new aws.iam.RolePolicyAttachment("ec2S3Access", {
+    role: ec2Role.name,
+    policyArn: "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+});
+
+new aws.iam.RolePolicyAttachment("ec2CloudWatchAccess", {
+    role: ec2Role.name,
+    policyArn: "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+});
+```
+
    - **Policy Details**:
      - **AmazonS3ReadOnlyAccess**:
        - Allows reading from any S3 bucket
@@ -1101,13 +1129,61 @@ Important Security Notes:
        - Enables sending logs and metrics to CloudWatch
        - Required for proper monitoring
 
-3. **Creating Instance Profile**
+4. **Creating Instance Profile**
 
-4. **Assigning to EC2 Instance**
+```javascript
+const ec2InstanceProfile = new aws.iam.InstanceProfile("ec2InstanceProfile", {
+    role: ec2Role.name,
+});
+```
+
+5. **Assigning to EC2 Instance**
+
+```javascript
+ec2Instance.iamInstanceProfile = ec2InstanceProfile.name;
+```
 
 ---
 
 ## 2. CloudWatch Logging and Alarms
+
+Add to your Pulumi code:
+
+```
+// Create CloudWatch log group
+const backendLogGroup = new aws.cloudwatch.LogGroup("backendLogGroup", {
+    retentionInDays: 7,
+});
+
+// Create CloudWatch alarm for high CPU
+const highCpuAlarm = new aws.cloudwatch.MetricAlarm("highCpuAlarm", {
+    comparisonOperator: "GreaterThanThreshold",
+    evaluationPeriods: 2,
+    metricName: "CPUUtilization",
+    namespace: "AWS/EC2",
+    period: 120,
+    statistic: "Average",
+    threshold: 80,
+    alarmDescription: "Alarm when CPU exceeds 80%",
+    dimensions: {
+        InstanceId: ec2Instance.id,
+    },
+    alarmActions: [/* Add your SNS topic ARN here for notifications */],
+});
+
+// Create CloudWatch alarm for failed deployments
+const failedDeploymentsAlarm = new aws.cloudwatch.MetricAlarm("failedDeploymentsAlarm", {
+    comparisonOperator: "GreaterThanThreshold",
+    evaluationPeriods: 1,
+    metricName: "FailedDeployments",
+    namespace: "AWS/CodeDeploy",
+    period: 60,
+    statistic: "Sum",
+    threshold: 0,
+    alarmDescription: "Alarm when deployments fail",
+    alarmActions: [/* Add your SNS topic ARN here for notifications */],
+});
+```
 
 
 ---
@@ -1116,25 +1192,71 @@ Important Security Notes:
 # 8. Final Deployment and Testing
 
 ## 1. Committing and Pushing Code
+
+**Commands:**
+```
+git add .
+git commit -m "Initial project setup with infrastructure and application code"
+git push origin main
+```
+
+
+
 ### Purpose:
 - Stages all changes (`git add .`)
 - Creates a commit with a descriptive message
 - Pushes code to GitHub, triggering CI/CD pipelines
 
-### What Happens Next:
-3. GitHub Actions will:
-   - Deploy the frontend to S3 (from the frontend workflow)
-   - Deploy the backend to EC2 (from the backend workflow)
 
-4. Each workflow runs independently but in parallel
+![Final-Project](../_assets/6-Link-GitHub-data.PNG)
+
+
+![Final-Project](../_assets/6-Link-GitHub-data-done.PNG)
+
+
+### What Happens Next:
+1. GitHub Actions will:
+
+    - Deploy the frontend to S3 (from the frontend workflow)
+
+![Final-Project](../_assets/6-Deploy-Frontend-to-S3.PNG)
+
+![Final-Project](../_assets/6-Deploy-Frontend-to-S3-done.PNG)
+
+
+    - Deploy the backend to EC2 (from the backend workflow)
+
+![Final-Project](../_assets/6-Deploy-Backend-to-EC2-done.PNG)
+
+![Final-Project](../_assets/6-Deploy-Backend-to-EC2-done-2.PNG)
+
+
+3. Each workflow runs independently but in parallel
 
 ---
 
 ## 2. Deploying Infrastructure
+
+**Commands:**
+
+```
+cd infrastructure
+pulumi up
+```
+
+![Final-Project](../_assets/5-pulumi-up-1.PNG)
+
+
+![Final-Project](../_assets/5-pulumi-up-done-1.PNG)
+
+
+![Final-Project](../_assets/5-pulumi-up-2-done.PNG)
+
+
 ### Workflow:
-4. Pulumi shows a preview of resources to be created/modified.
-5. You must type "yes" to confirm deployment.
-6. Pulumi provisions resources in the correct dependency order:
+1. Pulumi shows a preview of resources to be created/modified.
+2. You must type "yes" to confirm deployment.
+3. Pulumi provisions resources in the correct dependency order:
    - First creates VPC and networking components
    - Then creates the S3 bucket and RDS instance
    - Finally, creates the EC2 instance with proper security groups
@@ -1147,10 +1269,20 @@ Important Security Notes:
 ---
 
 ## 3. Capturing Outputs
+
+**Command:**
+```
+pulumi stack output
+```
+
 ### Expected Outputs:
 - `frontendUrl`: S3 website endpoint (e.g., `http://frontend-bucket-123.s3-website-us-east-1.amazonaws.com`)
 - `backendUrl`: EC2 public IP with port (e.g., `http://54.210.32.1:3001`)
 - `dbEndpoint`: RDS connection endpoint (e.g., `backend-db-123.abcdefgh.us-east-1.rds.amazonaws.com:5432`)
+
+
+![Final-Project](../_assets/5-stack-output.PNG)
+
 
 ### Important:
 Save these outputs for testing and configuration!
@@ -1159,23 +1291,48 @@ Save these outputs for testing and configuration!
 
 ## 4. Backend API Testing
 ### Health Check Endpoint:
+
+```
+curl <backend-url>/api/health
+```
+
+![Final-Project](../_assets/BBB-.PNG)
+
+
+
 **Expected Response:**
+```
+{"status":"OK"}
+```
 
 ### Message Endpoint:
+```
+curl <backend-url>/api/message
+```
 **Expected Response:**
+```
+{"text":"Hello from the backend!"}
+```
+
+![Final-Project](../_assets/BBB.PNG)
+
 
 ---
 
 ## 5. Comprehensive Testing Strategy
 
 ### Frontend Testing:
-3. Access the frontend URL:
-   - Open the browser to `frontendUrl` from Pulumi outputs.
+1. Access the frontend URL:
    - The page should display the "Cloud Infrastructure Project" heading.
 
-4. Verify components:
+![Final-Project](../_assets/FFF.PNG)
+
+
+2. Verify components:
    - Check for the message "Hello from the backend!".
-   - This confirms successful frontend-backend communication.
+
+![Final-Project](../_assets/BBB.PNG)
+
 
 ---
 
